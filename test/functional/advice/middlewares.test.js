@@ -1,7 +1,7 @@
 import createHttpError from 'http-errors';
 import { validateParam } from '../../../app/advice/middlewares';
 
-describe('TEST: Middlewares', () => {
+describe('TEST: Advice Middlewares', () => {
   describe('TEST: validateParam', () => {
     let req, res, next;
     const error = createHttpError(400);
