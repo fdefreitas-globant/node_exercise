@@ -6,7 +6,7 @@ import cookieParser from 'cookie-parser';
 import './config/init';
 import './db/init';
 import router from './router';
-import { routerAdvice } from './app/advice'
+import { routerAdvice } from './app/advice';
 
 const app = express();
 
