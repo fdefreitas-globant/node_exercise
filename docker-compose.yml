@@ -19,4 +19,4 @@ services:
     volumes:
       - $PWD/bin/db-setup:/bin/db-setup
     ports:
-      - '5400:5432'
+      - '5432:5432'
