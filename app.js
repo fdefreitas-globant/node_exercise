@@ -6,6 +6,8 @@ import cookieParser from 'cookie-parser';
 import './config/init';
 import './db/init';
 import router from './router';
+import { routerAdvice } from './app/advice';
+import { routerAPI } from './app/api';
 
 const app = express();
 
@@ -18,6 +20,8 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', router);
+app.use('/advice', routerAdvice);
+app.use('/api', routerAPI);
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
