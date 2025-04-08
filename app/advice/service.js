@@ -1,7 +1,11 @@
 import { insertAdvice } from './model';
 import axios from 'axios';
+import nconf from 'nconf';
+import path from 'path';
 
-const BASE_URL = 'https://api.adviceslip.com/advice/';
+nconf.file({ file: path.join(__dirname, '../../.env.json') });
+
+const BASE_URL = nconf.get('BASE_URL');
 
 export const getAdvice = async (keyword) => {
   try {
