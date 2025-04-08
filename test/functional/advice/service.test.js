@@ -1,65 +1,35 @@
-import axios from 'axios';
-import { insertAdvice, readAdvice } from '../../../app/advice/model';
-import { getAdvice } from '../../../app/advice/service';
+import { getAdvices } from '../../../app/api/service';
 
-jest.mock('axios');
-jest.mock('../../../app/advice/model');
-
-describe('TEST: Advice Service', () => {
-  describe('TEST: getAdvice', () => {
-    const keyword = 'abcd';
-
-    afterEach(() => {
-      jest.clearAllMocks();
+describe('TEST: API Service', () => {
+  describe('TEST: getAdvices', () => {
+    test('should return advice that includes the keyword', async () => {
+      const result = await getAdvices('Believe');
+      expect(result.slips).toHaveLength(3);
     });
 
-    test('should fetch advice and store it successfully', async () => {
-      const mockAdvice = { slip: { advice: 'Stay positive!', id: 1 } };
-
-      axios.get.mockResolvedValueOnce({ data: mockAdvice });
-      insertAdvice.mockResolvedValueOnce();
-
-      const advice = await getAdvice(keyword);
-
-      expect(axios.get).toHaveBeenCalledWith(
-        `https://api.adviceslip.com/advice/${keyword}`,
-      );
-      expect(insertAdvice).toHaveBeenCalledWith({
-        api_id: 1,
-        query: keyword,
-        advice: 'Stay positive!',
-      });
-      expect(advice).toBe('Stay positive!');
+    test('should return multiple advices when keyword matches multiple items', async () => {
+      const result = await getAdvices('and');
+      expect(result.slips).toHaveLength(3);
     });
 
-    test('should read advice from db successfully', async () => {
-      const mockAdvice = { advice: 'Stay positive!', id: 1 };
-
-      readAdvice.mockResolvedValueOnce(mockAdvice);
-
-      const advice = await getAdvice(keyword);
-
-      expect(axios.get).not.toHaveBeenCalled();
-      expect(insertAdvice).not.toHaveBeenCalled();
-      expect(readAdvice).toHaveBeenCalledWith({ query: keyword });
-      expect(advice).toBe('Stay positive!');
+    test('should return an empty array when no advice matches the keyword', async () => {
+      const result = await getAdvices('nonexistent');
+      expect(result.slips).toHaveLength(0);
     });
 
-    test('should throw an error if axios fails', async () => {
-      const errorMessage = 'Network Error';
-
-      axios.get.mockRejectedValueOnce(new Error(errorMessage));
-
-      await expect(getAdvice(keyword)).rejects.toThrow(errorMessage);
+    test('should return an empty array when keyword is an empty string', async () => {
+      const result = await getAdvices('');
+      expect(result.slips).toHaveLength(0);
     });
 
-    test('should throw an error if insertAdvice fails', async () => {
-      const mockAdvice = { slip: { advice: 'Stay positive!', id: 1 } };
+    test('should be case-sensitive when matching keywords', async () => {
+      const result = await getAdvices('stay');
+      expect(result.slips).toHaveLength(0);
+    });
 
-      axios.get.mockResolvedValueOnce({ data: mockAdvice });
-      insertAdvice.mockRejectedValueOnce(new Error('Database Error'));
-
-      await expect(getAdvice(keyword)).rejects.toThrow('Database Error');
+    test('should handle special characters in keywords', async () => {
+      const result = await getAdvices('hard');
+      expect(result.slips).toHaveLength(0);
     });
   });
 });

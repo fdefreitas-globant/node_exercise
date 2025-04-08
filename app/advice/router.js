@@ -15,6 +15,7 @@ router.get('/:keyword', validateParam, async (req, res, next) => {
 
     res.json({ advice });
   } catch (error) {
+    console.log(error.message);
     next(createHttpError(502));
   }
 });
