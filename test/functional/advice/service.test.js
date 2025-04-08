@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { insertAdvice } from '../../../app/advice/model';
+import { insertAdvice, readAdvice } from '../../../app/advice/model';
 import { getAdvice } from '../../../app/advice/service';
 
 jest.mock('axios');
@@ -29,6 +29,19 @@ describe('TEST: Advice Service', () => {
         query: keyword,
         advice: 'Stay positive!',
       });
+      expect(advice).toBe('Stay positive!');
+    });
+
+    test('should read advice from db successfully', async () => {
+      const mockAdvice = { advice: 'Stay positive!', id: 1 };
+
+      readAdvice.mockResolvedValueOnce(mockAdvice);
+
+      const advice = await getAdvice(keyword);
+
+      expect(axios.get).not.toHaveBeenCalled();
+      expect(insertAdvice).not.toHaveBeenCalled();
+      expect(readAdvice).toHaveBeenCalledWith({ query: keyword });
       expect(advice).toBe('Stay positive!');
     });
 
