@@ -1,4 +1,4 @@
-import { insertAdvice } from './model';
+import { insertAdvice, readAdvice } from './model';
 import axios from 'axios';
 import nconf from 'nconf';
 import path from 'path';
@@ -9,6 +9,13 @@ const BASE_URL = nconf.get('BASE_URL');
 
 export const getAdvice = async (keyword) => {
   try {
+    // Search in the database
+    const dbAdvice = await readAdvice({ query: keyword });
+
+    if (dbAdvice) {
+      return dbAdvice.advice;
+    }
+
     // Get Advice from API
     const { data } = await axios.get(`${BASE_URL}${keyword}`);
     const { advice, id } = data.slip;
